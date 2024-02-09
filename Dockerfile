@@ -11,7 +11,6 @@ RUN case "$TARGETARCH" in \
         "arm") \
             PLUGIN_LIST="github.com/apache/incubator-answer-plugins/connector-basic@latest \
                          github.com/apache/incubator-answer-plugins/connector-github@latest \
-                         github.com/apache/incubator-answer-plugins/editor-chart@latest \
                          github.com/apache/incubator-answer-plugins/editor-formula@latest";; \
         "amd64"|"arm64") \
             PLUGIN_LIST="github.com/apache/incubator-answer-plugins/connector-basic@latest \
@@ -58,7 +57,7 @@ RUN case "$TARGETARCH" in \
             rm $GO_PKG && \
             corepack enable && \
             export NODE_OPTIONS="--max-old-space-size=8096" && \
-            pnpm add -D -r @swc/core-linux-arm-gnueabihf @swc/core @swc/cli @swc/wasm swc-loader ;; \
+            pnpm add -D -r @swc/core-linux-arm-gnueabihf @swc/core @swc/cli @swc/wasm swc-loader;; \
         "amd64"|"arm64") \
             GO_PKG="go${GOLANG_VERSION}.linux-${TARGETARCH}.tar.gz" && \
             wget https://go.dev/dl/$GO_PKG && \
