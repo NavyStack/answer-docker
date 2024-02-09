@@ -7,7 +7,7 @@ services:
     volumes:
       - answer-data:/data
     ports:
-      - "9080:80"
+      - '9080:80'
     networks:
       - traefik-network
       - internal
@@ -24,7 +24,7 @@ services:
     volumes:
       - answer-db:/var/lib/mysql
     ports:
-      - "3306:3306"
+      - '3306:3306'
     networks:
       - internal
 
