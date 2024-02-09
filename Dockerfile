@@ -11,7 +11,10 @@ RUN case "$TARGETARCH" in \
         "arm") \
             PLUGIN_LIST="github.com/apache/incubator-answer-plugins/connector-basic@latest \
                          github.com/apache/incubator-answer-plugins/connector-github@latest \
-                         github.com/apache/incubator-answer-plugins/storage-s3@latest";; \
+                         github.com/apache/incubator-answer-plugins/storage-s3@latest \
+                         github.com/apache/incubator-answer-plugins/editor-chart@latest \
+                         github.com/apache/incubator-answer-plugins/editor-formula@latest \
+                         github.com/apache/incubator-answer-plugins/cache-redis@latest";; \
         "amd64"|"arm64") \
             PLUGIN_LIST="github.com/apache/incubator-answer-plugins/connector-basic@latest \
                          github.com/apache/incubator-answer-plugins/connector-github@latest \
