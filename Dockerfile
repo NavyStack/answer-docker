@@ -52,27 +52,26 @@ ARG CGO_EXTRA_CFLAGS
 COPY --from=git /incubator-answer/ ${BUILD_DIR}
 WORKDIR ${BUILD_DIR}
 
-RUN { \
-        if [ "$TARGETARCH" = "arm" ]; then \
-            GO_PKG="go${GOLANG_VERSION}.linux-${TARGETARCH}v6l.tar.gz" && \
-            wget https://go.dev/dl/$GO_PKG && \
-            tar -C /usr/local -xzf $GO_PKG && \
-            rm $GO_PKG && \
-        elif [ "$TARGETARCH" = "amd64" ] || [ "$TARGETARCH" = "arm64" ]; then \
-            GO_PKG="go${GOLANG_VERSION}.linux-${TARGETARCH}.tar.gz" && \
-            wget https://go.dev/dl/$GO_PKG && \
-            tar -C /usr/local -xzf $GO_PKG && \
-            rm $GO_PKG; \
-        else \
-            echo "Unsupported architecture: $TARGETARCH" && \
-            exit 1; \
-        fi && \
-        corepack enable && \
-        if [ "$TARGETARCH" = "arm" ]; then \
-            pnpm add -D -r @swc/core-linux-arm-gnueabihf @swc/core @swc/cli @swc/wasm swc-loader; \
-        fi && \
-        make clean build; \
-    }
+RUN if [ "$TARGETARCH" = "arm" ]; then \
+        GO_PKG="go${GOLANG_VERSION}.linux-${TARGETARCH}v6l.tar.gz" \
+        && wget https://go.dev/dl/$GO_PKG \
+        && tar -C /usr/local -xzf $GO_PKG \
+        && rm $GO_PKG \
+        && export NODE_OPTIONS="--max-old-space-size=2048"; \
+    elif [ "$TARGETARCH" = "amd64" ] || [ "$TARGETARCH" = "arm64" ]; then \
+        GO_PKG="go${GOLANG_VERSION}.linux-${TARGETARCH}.tar.gz" \
+        && wget https://go.dev/dl/$GO_PKG \
+        && tar -C /usr/local -xzf $GO_PKG \
+        && rm $GO_PKG; \
+    else \
+        echo "Unsupported architecture: $TARGETARCH"; \
+        exit 1; \
+    fi \
+    && corepack enable \
+    && if [ "$TARGETARCH" = "arm" ]; then \
+        pnpm add -D -r @swc/core-linux-arm-gnueabihf @swc/core @swc/cli @swc/wasm swc-loader; \
+    fi \
+    && make clean build
 
 RUN chmod +x answer
 RUN ["/bin/bash","-c","script/build_plugin.sh"]
