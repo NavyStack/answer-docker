@@ -1,0 +1,36 @@
+version: '3.9'
+services:
+  answer:
+    image: navystack/answer:latest
+    restart: unless-stopped
+    container_name: answer
+    volumes:
+      - answer-data:/data
+    ports:
+      - "9080:80"
+    networks:
+      - traefik-network
+      - internal
+
+  answer-db:
+    image: mysql:8.0
+    restart: unless-stopped
+    container_name: answer-db
+    environment:
+      MYSQL_USER: answer
+      MYSQL_PASSWORD: UqCmX5bGqst6C9Bgh92kzKQea02qtW
+      MYSQL_DATABASE: answer
+      MYSQL_ROOT_PASSWORD: HnHoSPsqhxcJAPBYTLrw02uE3hFI5R
+    volumes:
+      - answer-db:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - internal
+
+volumes:
+  answer-data:
+  answer-db:
+
+networks:
+  internal:

@@ -1,0 +1,42 @@
+version: '3.9'
+services:
+  answer:
+    image: navystack/answer:latest
+    restart: unless-stopped
+    container_name: answer
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.services.answer.loadbalancer.server.port=80'
+      - 'traefik.http.routers.answer-rt.tls=true'
+      - 'traefik.http.routers.answer-rt.service=answer'
+      - 'traefik.http.routers.answer-rt.entrypoints=websecure'
+      - 'traefik.http.routers.answer-rt.rule=Host(`demo2.navystack.com`)'
+      - 'traefik.http.routers.answer-rt.middlewares=compress-1024@file,websocket@file'
+    volumes:
+      - answer-data:/data
+    networks:
+      - traefik-network
+      - internal
+
+  answer-db:
+    image: mysql:8.0
+    restart: unless-stopped
+    container_name: answer-db
+    environment:
+      MYSQL_USER: answer
+      MYSQL_PASSWORD: UqCmX5bGqst6C9Bgh92kzKQea02qtW
+      MYSQL_DATABASE: answer
+      MYSQL_ROOT_PASSWORD: HnHoSPsqhxcJAPBYTLrw02uE3hFI5R
+    volumes:
+      - answer-db:/var/lib/mysql
+    networks:
+      - internal
+
+volumes:
+  answer-data:
+  answer-db:
+
+networks:
+  internal:
+  traefik-network:
+    external: true
