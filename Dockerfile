@@ -57,7 +57,7 @@ RUN case "$TARGETARCH" in \
             tar -C /usr/local -xzf $GO_PKG && \
             rm $GO_PKG && \
             corepack enable && \
-            export NODE_OPTIONS="--max-old-space-size=2048" && \
+            export NODE_OPTIONS="--max-old-space-size=8096" && \
             pnpm add -D -r @swc/core-linux-arm-gnueabihf @swc/core @swc/cli @swc/wasm swc-loader ;; \
         "amd64"|"arm64") \
             GO_PKG="go${GOLANG_VERSION}.linux-${TARGETARCH}.tar.gz" && \
