@@ -11,7 +11,10 @@ RUN case "$TARGETARCH" in \
         "arm") \
             PLUGIN_LIST="github.com/apache/incubator-answer-plugins/connector-basic@latest \
                          github.com/apache/incubator-answer-plugins/connector-github@latest \
-                         github.com/apache/incubator-answer-plugins/storage-s3@latest";; \
+                         github.com/apache/incubator-answer-plugins/storage-s3@latest \
+                         github.com/apache/incubator-answer-plugins/editor-chart@latest \
+                         github.com/apache/incubator-answer-plugins/editor-formula@latest \
+                         github.com/apache/incubator-answer-plugins/cache-redis@latest";; \
         "amd64"|"arm64") \
             PLUGIN_LIST="github.com/apache/incubator-answer-plugins/connector-basic@latest \
                          github.com/apache/incubator-answer-plugins/connector-github@latest \
@@ -33,21 +36,22 @@ RUN case "$TARGETARCH" in \
     } | sort | uniq > "$PLUGIN_LIST_FILE"
 
 FROM node:lts-bookworm AS golang-builder
+
 ARG TARGETARCH
 ARG GOLANG_VERSION=1.22.0
 ARG CGO_EXTRA_CFLAGS
 
-ENV PNPM_HOME="/pnpm" \
-    GOPATH="/go" \
-    GOROOT="/usr/local/go" \
-    PACKAGE="github.com/apache/incubator-answer" \
-    PATH="$PNPM_HOME:$GOPATH/bin:$GOROOT/bin:$PATH" \
-    BUILD_DIR="${GOPATH}/src/${PACKAGE}" \
-    ANSWER_MODULE="${BUILD_DIR}"
+ENV PNPM_HOME="/pnpm"
+ENV GOPATH="/go"
+ENV GOROOT="/usr/local/go"
+ENV PACKAGE="github.com/apache/incubator-answer"
+ENV PATH="$PNPM_HOME:$GOPATH/bin:$GOROOT/bin:$PATH"
+ENV BUILD_DIR ${GOPATH}/src/${PACKAGE}
+ENV ANSWER_MODULE ${BUILD_DIR}
 
 COPY --from=git /incubator-answer/ ${BUILD_DIR}
-WORKDIR ${BUILD_DIR}
 
+WORKDIR ${BUILD_DIR}
 RUN case "$TARGETARCH" in \
         "arm") \
             GO_PKG="go${GOLANG_VERSION}.linux-${TARGETARCH}v6l.tar.gz" && \
@@ -56,16 +60,16 @@ RUN case "$TARGETARCH" in \
             rm $GO_PKG && \
             corepack enable && \
             export NODE_OPTIONS="--max-old-space-size=2048" && \
-            pnpm add -D -r @swc/core-linux-arm-gnueabihf @swc/core @swc/cli @swc/wasm swc-loader;; \
+            pnpm add -D -r @swc/core-linux-arm-gnueabihf @swc/core @swc/cli @swc/wasm swc-loader ;; \
         "amd64"|"arm64") \
             GO_PKG="go${GOLANG_VERSION}.linux-${TARGETARCH}.tar.gz" && \
             wget https://go.dev/dl/$GO_PKG && \
             tar -C /usr/local -xzf $GO_PKG && \
             rm $GO_PKG && \
-            corepack enable;; \
+            corepack enable ;; \
         *) \
             echo "Unsupported architecture: $TARGETARCH" && \
-            exit 1;; \
+            exit 1 ;; \
     esac && \
     make clean build
 
