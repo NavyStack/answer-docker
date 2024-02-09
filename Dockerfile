@@ -30,6 +30,9 @@ RUN { \
                 echo 'github.com/apache/incubator-answer-plugins/connector-basic@latest'; \
                 echo 'github.com/apache/incubator-answer-plugins/connector-github@latest'; \
                 echo 'github.com/apache/incubator-answer-plugins/storage-s3@latest'; \
+                echo 'github.com/apache/incubator-answer-plugins/editor-chart@latest'; \
+                echo 'github.com/apache/incubator-answer-plugins/editor-formula@latest'; \
+                echo 'github.com/apache/incubator-answer-plugins/cache-redis@latest'; \
             fi; \
         fi; \
     } | sort | uniq > "$PLUGIN_LIST_FILE"
@@ -55,7 +58,6 @@ RUN { \
             wget https://go.dev/dl/$GO_PKG && \
             tar -C /usr/local -xzf $GO_PKG && \
             rm $GO_PKG && \
-            export NODE_OPTIONS="--max-old-space-size=2048"; \
         elif [ "$TARGETARCH" = "amd64" ] || [ "$TARGETARCH" = "arm64" ]; then \
             GO_PKG="go${GOLANG_VERSION}.linux-${TARGETARCH}.tar.gz" && \
             wget https://go.dev/dl/$GO_PKG && \
