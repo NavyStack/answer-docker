@@ -19,7 +19,7 @@ services:
       - internal
 
   answer-db:
-    image: mysql:8.0
+    image: mysql:9.1
     restart: unless-stopped
     container_name: answer-db
     environment:
